@@ -3,10 +3,28 @@
 #Theo Falgarone / Tristan Maunier
 
 use strict;
-use Try::Tiny;
 use DBI;
 
 
+#Menu
+sub menu
+{
+	print"\n";
+	print"		Que voulez vous faire ?\n";
+	print"\n";
+	print"Tapez 1 pour Ajouter un nouvel animal\n";
+	print"Tapez 2 pour Modifier l'adresse d'un proprietaire\n";
+	print"Tapez 3 pour Enregistrer un nouveau vaccin\n";
+	print"Tapez 4 pour Afficher tous les chats\n";
+	print"Tapez 5 pour Afficher les animaux de type X ayant moins de Y annees\n";
+	print"Tapez 6 pour Afficher le nombre moyen d'animaux par proprietaire\n";
+	print"Tapez 7 pour Afficher les proprietaires qui ont plus de trois animaux\n";
+	print"Tapez 8 pour Pour chaque commune, Afficher le nombre de proprietaires distincts\n";
+	print"Tapez 9 pour Pour chaque commune, Afficher le nombre total d'animaux\n";
+	print"Tapez 0 pour quitter\n";
+}
+
+#Ajout element table Animal
 sub Table_Animal
 {
 	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
@@ -28,11 +46,11 @@ sub Table_Animal
 	for (my $i=0 ; $i<=$#IdAnimal ; $i++)
 	{
 		$dbh ->do("Insert Into Animal Values($IdAnimal[$i],'$NomAnimal[$i]','$Espece[$i]','$Sexe[$i]','$Couleur[$i]',$AnneeNaissance[$i],$Telephone[$i])") ;
-		print "Success Animal\n" ;
 	}
 	$dbh->disconnect();
 }
 
+#Ajout element table Medical
 sub Table_Medical
 {
 	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
@@ -50,11 +68,11 @@ sub Table_Medical
 	for (my $i=0 ; $i<=$#IdAnimal ; $i++)
 	{
 		$dbh ->do("Insert Into Medical Values($IdAnimal[$i],'$Sterilise[$i]', $Vaccin1[$i],$Vaccin2[$i],$Vaccin3[$i])") ;
-		print "Success Medical\n" ;
 	}
 	$dbh->disconnect();
 }
 
+#Ajout element table Proprietaire
 sub Table_Proprietaire
 {
 	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
@@ -68,11 +86,11 @@ sub Table_Proprietaire
 	for (my $i=0 ; $i<=$#Telephone ; $i++)
 	{
 		$dbh ->do("Insert Into Proprietaire Values($Telephone[$i],'$Nom[$i]','$Prenom[$i]')") ;
-		print "Success Proprietaire\n" ;
 	}
 	$dbh->disconnect();
 }
 
+#Ajout element table Adresse
 sub Table_Adresse
 {
 	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
@@ -86,11 +104,11 @@ sub Table_Adresse
 	for (my $i=0 ; $i<=$#Telephone ; $i++)
 	{
 		$dbh ->do("Insert Into Adresse Values($Telephone[$i],'$Rue[$i]',$CodePostal[$i])") ;
-		print "Success Adresse\n" ;
 	}
 	$dbh->disconnect();
 }
 
+#Ajout element table Commune
 sub Table_Commune
 {
 	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
@@ -106,9 +124,182 @@ sub Table_Commune
 	for (my $i=0 ; $i<=$#CodePostal ; $i++)
 	{
 		$dbh ->do("Insert Into Commune Values($CodePostal[$i],'$NomCommune[$i]',$NbHabitants[$i],$CodeDepartement[$i])") ;
-		print "Success Commune\n" ;
 	}
 	$dbh->disconnect();
+}
+
+#Ajout d'un nouvel animal
+sub Ajout_Animal
+{
+	print "Est-ce que le proprietaire est deja enregistrée [O/N]\n" ;
+	my $ans = "" ;
+	$ans = <STDIN> ;
+	chomp $ans ;
+	if (($ans eq 'O') || ($ans eq 'o'))
+	{
+		New_Animal() ;
+	}
+	elsif (($ans eq 'N') || ($ans eq 'n'))
+	{
+		Ajout_Proprietaire() ;
+		New_Animal() ;
+	}
+	else
+	{
+		print "Veuillez saisir O ou N\n" ;
+		Ajout_Animal() ;
+	}
+}
+
+sub New_Animal
+{
+	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
+"tfalgarone", "",{'PrintError' =>0});
+	print "Donnez l'ID de l'animal\n" ;
+	my $ID = <STDIN> ;
+	print "Donnez le nom de l'animal\n" ;
+	my $nom = <STDIN> ;
+	print "Donnez l'espece de l'animal\n" ;
+	my $espece = <STDIN> ;
+	print "Donnez le Sexe de l'animal (M/F)\n" ;
+	my $sexe = <STDIN> ;
+	print "Donnez la couleur de l'animal\n" ;
+	my $couleur = <STDIN> ;
+	print "Donnez l'annee de naissance de l'animal\n" ;
+	my $annee = <STDIN> ;
+	print "Donnez le numero de telephone du proprietaire de l'animal\n" ;
+	my $tel = <STDIN> ;
+	print "L'animal est-il sterilise ? (Oui/Non)\n" ;
+	my $sterilise = <STDIN> ;
+	$dbh ->do("Insert Into Animal Values($ID,'$nom','$espece','$sexe','$couleur',$annee,$tel)") or warn $DBI::errstr ;
+	$dbh ->do("Insert Into Medical Values($ID,'$sterilise',0,0,0)") or warn $DBI::errstr ;
+	$dbh->disconnect() ;
+}
+
+sub Ajout_Proprietaire
+{
+	print "Est-ce que la commune dans laquelle vit le proprietaire est deja enregistrée [O/N]\n" ;
+	my $ans = <STDIN> ;
+	chomp $ans ;
+	if (($ans eq 'O') || ($ans eq 'o'))
+	{
+		New_Proprietaire() ;
+	}
+	elsif (($ans eq 'N') || ($ans eq 'n'))
+	{
+		New_Commune() ;
+		New_Proprietaire() ;
+	}
+	else
+	{
+		print "Veuillez saisir O ou N\n" ;
+		Ajout_Proprietaire() ;
+	}
+}
+
+sub New_Proprietaire
+{
+	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
+"tfalgarone", "",{'PrintError' =>0});
+	print "Donnez le nom du proprietaire\n" ;
+	my $nom = <STDIN> ;
+	print "Donnez le prenom du proprietaire\n" ;
+	my $prenom = <STDIN> ;
+	print "Donnez le numero de telephone du proprietaire\n" ;
+	my $tel = <STDIN> ;
+	print "Donnez le code postal du proprietaire\n" ;
+	my $codepostal = <STDIN> ;
+	print "Donnez le nom de la rue du proprietaire\n" ;
+	my $rue = <STDIN> ;
+	$dbh ->do("Insert Into Proprietaire Values($tel,'$nom','$prenom')") or warn $DBI::errstr ;
+	$dbh ->do("Insert Into Adresse Values($tel,'$rue',$codepostal)") or warn $DBI::errstr ;
+	$dbh->disconnect() ;
+}
+
+sub New_Commune()
+{
+	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
+"tfalgarone", "",{'PrintError' =>0});
+	print "Donnez le code postal de la commune\n" ;
+	my $codepostal = <STDIN> ;
+	print "Donnez le nom de la commune\n" ;
+	my $nom = <STDIN> ;
+	print "Donnez le nombre d'habitants\n" ;
+	my $nb = <STDIN> ;
+	print "Donnez le code departement\n" ;
+	my $codedepartement = <STDIN> ;
+	$dbh ->do("Insert Into Commune Values($codepostal,'$nom',$nb,$codedepartement)") or warn $DBI::errstr ;
+	$dbh->disconnect() ;
+}
+
+
+#Modifier l'adresse d'un proprietaire
+sub Update_Adresse
+{
+	print "Est-ce que la commune dans laquelle vit le proprietaire est deja enregistrée [O/N]\n" ;
+	my $ans = <STDIN> ;
+	chomp $ans ;
+	if (($ans eq 'O') || ($ans eq 'o'))
+	{
+		New_Adresse() ;
+	}
+	elsif (($ans eq 'N') || ($ans eq 'n'))
+	{
+		New_Commune() ;
+		New_Adresse() ;
+	}
+	else
+	{
+		print "Veuillez saisir O ou N\n" ;
+		Update_Adresse() ;
+	}
+}
+
+sub New_Adresse
+{
+	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
+"tfalgarone", "",{'PrintError' =>0});
+	print "Donnez le numero de telephone du proprietaire\n" ;
+	my $tel = <STDIN> ;
+	print "Donnez le nom de la rue\n" ;
+	my $rue = <STDIN> ;
+	print "Donnez le code postal de la commune\n" ;
+	my $codepostal = <STDIN> ;
+	$dbh ->do("Update Adresse Set Rue = '$rue',CodePostal='$codepostal' Where Telephone = $tel ") or warn $DBI::errstr ;
+	$dbh->disconnect() ;
+}
+
+#Modifier les vaccins
+sub New_Vaccin
+{
+	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
+"tfalgarone", "",{'PrintError' =>0});
+	print "Donnez l'ID de l'animal\n" ;
+	my $id = <STDIN> ;
+	print "Quel vaccin voulez-vous ajouter ? (1/2/3)\n" ;
+	my $num = <STDIN> ;
+	my $vaccin = "" ;
+	if ($num == 1)
+	{
+		$vaccin = "Vaccin1" ;
+	}
+	elsif ($num == 2)
+	{
+		$vaccin = "Vaccin2" ;
+	}
+	elsif ($num == 3)
+	{
+		$vaccin = "Vaccin3" ;
+	}
+	else
+	{
+		print "Veuillez saisir 1, 2 ou 3" ;
+		New_Vaccin() ;
+	}
+	print "En quelle annee le vaccin a-t-il ete fait ?\n" ;
+	my $annee = <STDIN> ;
+	$dbh ->do("Update Medical Set $vaccin = $annee Where IDAnimal = $id") or warn $DBI::errstr ;
+	$dbh->disconnect() ;
 }
 
 
@@ -187,32 +378,12 @@ close (SRC) ;
 my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
 "tfalgarone", "",{'PrintError' =>0});
 
-
 Table_Proprietaire(\@Telephone,\@Nom,\@Prenom) ;
 Table_Commune(\@CodePostal,\@Commune,\@NbHabitantsCommune,\@CodeDepartement) ;
 Table_Adresse(\@Telephone,\@Rue,\@CodePostal) ;
 Table_Animal(\@IdAnimal,\@NomAnimal,\@TypeAnimal,\@Sexe,\@Couleur,\@AnneeNaissance,\@Telephone) ;
 Table_Medical(\@IdAnimal,\@Sterilise,\@Vaccin1,\@Vaccin2,\@Vaccin3) ;
 
-
-
-=head
-sub menu
-{
-	print"\n";
-	print"		Que voulez vous faire ?\n";
-	print"\n";
-	print"Tapez 1 pour Ajouter un nouvel animal\n";
-	print"Tapez 2 pour Modifier l'adresse d'un proprietaire\n";
-	print"Tapez 3 pour Enregistrer un nouveau vaccin\n";
-	print"Tapez 4 pour Afficher tous les chats\n";
-	print"Tapez 5 pour Afficher les animaux de type X ayant moins de Y annees\n";
-	print"Tapez 6 pour Afficher le nombre moyen d'animaux par proprietaire\n";
-	print"Tapez 7 pour Afficher les proprietaires qui ont plus de trois animaux\n";
-	print"Tapez 8 pour Pour chaque commune, Afficher le nombre de proprietaires distincts\n";
-	print"Tapez 9 pour Pour chaque commune, Afficher le nombre total d'animaux\n";
-	print"Tapez 0 pour quitter\n";
-}
 my $answer=-8;
 print"		Bonjour\n";
 while ($answer !=0)
@@ -222,15 +393,15 @@ while ($answer !=0)
 	chomp($answer);
 	if ($answer eq 1)
 	{
-		
+		Ajout_Animal() ;
 	}
 	if ($answer eq 2)
 	{
-		
+		Update_Adresse() ;
 	}
 	if ($answer eq 3)
 	{
-		
+		New_Vaccin() ;
 	}
 	if ($answer eq 4)
 	{
@@ -257,5 +428,5 @@ while ($answer !=0)
 		
 	}
 }
-=cut
+
 $dbh->disconnect();
