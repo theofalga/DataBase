@@ -10,7 +10,7 @@ use DBI;
 sub Table_Animal
 {
 	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
-"tfalgarone", "",{'PrintError' => 1}) or warn $DBI::errstr ;
+"tfalgarone", "",{'PrintError' => 0}) ;
 	my $refIdAnimal = shift ;
 	my @IdAnimal = @{$refIdAnimal};
 	my $refNomAnimal = shift ;
@@ -23,12 +23,12 @@ sub Table_Animal
 	my @Couleur = @{$refCouleur} ;
 	my $refAnneeNaissance = shift ;
 	my @AnneeNaissance = @{$refAnneeNaissance} ;
+	my $refTelephone = shift ;
+	my @Telephone = @{$refTelephone} ;
 	for (my $i=0 ; $i<=$#IdAnimal ; $i++)
 	{
-		my $sth = $dbh ->prepare("Insert Into Animal Values($IdAnimal[$i],'$NomAnimal[$i]','$Espece[$i]','$Sexe[$i]','$Couleur[$i]',$AnneeNaissance[$i])") ;
-		my $num = $sth -> execute() or warn $DBI::errstr if $DBI::err ;
-		$sth->finish ;
-		print "Success\n" ;
+		$dbh ->do("Insert Into Animal Values($IdAnimal[$i],'$NomAnimal[$i]','$Espece[$i]','$Sexe[$i]','$Couleur[$i]',$AnneeNaissance[$i],$Telephone[$i])") ;
+		print "Success Animal\n" ;
 	}
 	$dbh->disconnect();
 }
@@ -36,7 +36,7 @@ sub Table_Animal
 sub Table_Medical
 {
 	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
-"tfalgarone", "",{'RaiseError' =>1});
+"tfalgarone", "",{'PrintError' =>0});
 	my $refIdAnimal = shift ;
 	my @IdAnimal = @{$refIdAnimal};
 	my $refSterilise = shift ;
@@ -49,10 +49,8 @@ sub Table_Medical
 	my @Vaccin3 = @{$refVaccin3} ;
 	for (my $i=0 ; $i<=$#IdAnimal ; $i++)
 	{
-		my $sth = $dbh ->prepare("Insert Into Medical Values($IdAnimal[$i],'$Sterilise[$i]', $Vaccin1[$i],$Vaccin2[$i],$Vaccin3[$i])") ;
-		my $num = $sth -> execute() ;
-		$sth->finish;
-		print "Success\n" ;
+		$dbh ->do("Insert Into Medical Values($IdAnimal[$i],'$Sterilise[$i]', $Vaccin1[$i],$Vaccin2[$i],$Vaccin3[$i])") ;
+		print "Success Medical\n" ;
 	}
 	$dbh->disconnect();
 }
@@ -60,21 +58,17 @@ sub Table_Medical
 sub Table_Proprietaire
 {
 	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
-"tfalgarone", "",{'RaiseError' =>1}) or warn $DBI::errstr;
+"tfalgarone", "",{'PrintError' =>0}) ;
 	my $refTelephone = shift ;
 	my @Telephone = @{$refTelephone};
-	my $refIdAnimal = shift ;
-	my @IdAnimal = @{$refIdAnimal} ;
 	my $refNom = shift ;
 	my @Nom = @{$refNom} ;
 	my $refPrenom = shift ;
 	my @Prenom = @{$refPrenom} ;
-	for (my $i=0 ; $i<=$#IdAnimal ; $i++)
+	for (my $i=0 ; $i<=$#Telephone ; $i++)
 	{
-		my $sth = $dbh ->prepare("Insert Into Proprietaire Values($Telephone[$i],$IdAnimal[$i],'$Nom[$i]','$Prenom[$i]')") ;
-		my $num = $sth -> execute() or warn $DBI::errstr ;
-		$sth->finish;
-		print "Success\n" ;
+		$dbh ->do("Insert Into Proprietaire Values($Telephone[$i],'$Nom[$i]','$Prenom[$i]')") ;
+		print "Success Proprietaire\n" ;
 	}
 	$dbh->disconnect();
 }
@@ -82,7 +76,7 @@ sub Table_Proprietaire
 sub Table_Adresse
 {
 	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
-"tfalgarone", "",{'RaiseError' =>1});
+"tfalgarone", "",{'PrintError' =>0});
 	my $refTelephone = shift ;
 	my @Telephone = @{$refTelephone};
 	my $refRue = shift ;
@@ -91,10 +85,8 @@ sub Table_Adresse
 	my @CodePostal = @{$refCodePostal} ;
 	for (my $i=0 ; $i<=$#Telephone ; $i++)
 	{
-		my $sth = $dbh ->prepare("Insert Into Adresse Values($Telephone[$i],'$Rue[$i]',$CodePostal[$i])") ;
-		my $num = $sth -> execute() ;
-		$sth->finish;
-		print "Success\n" ;
+		$dbh ->do("Insert Into Adresse Values($Telephone[$i],'$Rue[$i]',$CodePostal[$i])") ;
+		print "Success Adresse\n" ;
 	}
 	$dbh->disconnect();
 }
@@ -102,7 +94,7 @@ sub Table_Adresse
 sub Table_Commune
 {
 	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
-"tfalgarone", "",{'RaiseError' =>1});
+"tfalgarone", "",{'PrintError' =>0});
 	my $refCodePostal = shift ;
 	my @CodePostal = @{$refCodePostal};
 	my $refNomCommune = shift ;
@@ -113,10 +105,8 @@ sub Table_Commune
 	my @CodeDepartement = @{$refCodeDepartement} ;
 	for (my $i=0 ; $i<=$#CodePostal ; $i++)
 	{
-		my $sth = $dbh ->prepare("Insert Into Adresse Values($CodePostal[$i],'$NomCommune[$i]',$NbHabitants[$i],$CodeDepartement[$i])") ;
-		my $num = $sth -> execute() ;
-		$sth->finish;
-		print "Success\n" ;
+		$dbh ->do("Insert Into Commune Values($CodePostal[$i],'$NomCommune[$i]',$NbHabitants[$i],$CodeDepartement[$i])") ;
+		print "Success Commune\n" ;
 	}
 	$dbh->disconnect();
 }
@@ -193,15 +183,16 @@ while(<SRC>)
 close (SRC) ;
 
 #Connection à la base de donnée
+
 my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
-"tfalgarone", "",{'RaiseError' =>1});
+"tfalgarone", "",{'PrintError' =>0});
 
 
-Table_Proprietaire(\@Telephone,\@IdAnimal,\@Nom,\@Prenom) ;
-
-#Deconnection de la base de donnée
-$dbh->disconnect();
-#Affichage de la liste pour verifier
+Table_Proprietaire(\@Telephone,\@Nom,\@Prenom) ;
+Table_Commune(\@CodePostal,\@Commune,\@NbHabitantsCommune,\@CodeDepartement) ;
+Table_Adresse(\@Telephone,\@Rue,\@CodePostal) ;
+Table_Animal(\@IdAnimal,\@NomAnimal,\@TypeAnimal,\@Sexe,\@Couleur,\@AnneeNaissance,\@Telephone) ;
+Table_Medical(\@IdAnimal,\@Sterilise,\@Vaccin1,\@Vaccin2,\@Vaccin3) ;
 
 
 
@@ -266,3 +257,5 @@ while ($answer !=0)
 		
 	}
 }
+=cut
+$dbh->disconnect();
