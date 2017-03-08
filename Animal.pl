@@ -5,19 +5,124 @@
 use strict;
 use Try::Tiny;
 use DBI;
-#Connection à la base de donnée
-my $dbh = DBI->connect("DBI:Pg:dbname=tmaunier;host=dbserver",
-"tmaunier", "",{'RaiseError' =>1});
-try {
-my $sth = $dbh ->prepare("Alter Table Animal ADD Constraint pkID Primary Key(IdAnimal)") ;
-}catch{
-	$sth->finish;
-	print "erreur\n" ;
-	if ($_ eq 0)
+
+
+sub Table_Animal
+{
+	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
+"tfalgarone", "",{'PrintError' => 1}) or warn $DBI::errstr ;
+	my $refIdAnimal = shift ;
+	my @IdAnimal = @{$refIdAnimal};
+	my $refNomAnimal = shift ;
+	my @NomAnimal = @{$refNomAnimal} ;
+	my $refEspece = shift ;
+	my @Espece = @{$refEspece} ;
+	my $refSexe = shift ;
+	my @Sexe = @{$refSexe} ;
+	my $refCouleur = shift ;
+	my @Couleur = @{$refCouleur} ;
+	my $refAnneeNaissance = shift ;
+	my @AnneeNaissance = @{$refAnneeNaissance} ;
+	for (my $i=0 ; $i<=$#IdAnimal ; $i++)
 	{
-		my $num = $sth -> execute() ;
+		my $sth = $dbh ->prepare("Insert Into Animal Values($IdAnimal[$i],'$NomAnimal[$i]','$Espece[$i]','$Sexe[$i]','$Couleur[$i]',$AnneeNaissance[$i])") ;
+		my $num = $sth -> execute() or warn $DBI::errstr if $DBI::err ;
+		$sth->finish ;
+		print "Success\n" ;
 	}
-};
+	$dbh->disconnect();
+}
+
+sub Table_Medical
+{
+	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
+"tfalgarone", "",{'RaiseError' =>1});
+	my $refIdAnimal = shift ;
+	my @IdAnimal = @{$refIdAnimal};
+	my $refSterilise = shift ;
+	my @Sterilise = @{$refSterilise} ;
+	my $refVaccin1 = shift ;
+	my @Vaccin1 = @{$refVaccin1} ;
+	my $refVaccin2 = shift ;
+	my @Vaccin2 = @{$refVaccin2} ;
+	my $refVaccin3 = shift ;
+	my @Vaccin3 = @{$refVaccin3} ;
+	for (my $i=0 ; $i<=$#IdAnimal ; $i++)
+	{
+		my $sth = $dbh ->prepare("Insert Into Medical Values($IdAnimal[$i],'$Sterilise[$i]', $Vaccin1[$i],$Vaccin2[$i],$Vaccin3[$i])") ;
+		my $num = $sth -> execute() ;
+		$sth->finish;
+		print "Success\n" ;
+	}
+	$dbh->disconnect();
+}
+
+sub Table_Proprietaire
+{
+	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
+"tfalgarone", "",{'RaiseError' =>1}) or warn $DBI::errstr;
+	my $refTelephone = shift ;
+	my @Telephone = @{$refTelephone};
+	my $refIdAnimal = shift ;
+	my @IdAnimal = @{$refIdAnimal} ;
+	my $refNom = shift ;
+	my @Nom = @{$refNom} ;
+	my $refPrenom = shift ;
+	my @Prenom = @{$refPrenom} ;
+	for (my $i=0 ; $i<=$#IdAnimal ; $i++)
+	{
+		my $sth = $dbh ->prepare("Insert Into Proprietaire Values($Telephone[$i],$IdAnimal[$i],'$Nom[$i]','$Prenom[$i]')") ;
+		my $num = $sth -> execute() or warn $DBI::errstr ;
+		$sth->finish;
+		print "Success\n" ;
+	}
+	$dbh->disconnect();
+}
+
+sub Table_Adresse
+{
+	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
+"tfalgarone", "",{'RaiseError' =>1});
+	my $refTelephone = shift ;
+	my @Telephone = @{$refTelephone};
+	my $refRue = shift ;
+	my @Rue = @{$refRue} ;
+	my $refCodePostale = shift ;
+	my @CodePostale = @{$refCodePostale} ;
+	for (my $i=0 ; $i<=$#Telephone ; $i++)
+	{
+		my $sth = $dbh ->prepare("Insert Into Adresse Values($Telephone[$i],'$Rue[$i]',$CodePostale[$i])") ;
+		my $num = $sth -> execute() ;
+		$sth->finish;
+		print "Success\n" ;
+	}
+	$dbh->disconnect();
+}
+
+sub Table_Commune
+{
+	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
+"tfalgarone", "",{'RaiseError' =>1});
+	my $refCodePostale = shift ;
+	my @CodePostale = @{$refCodePostale};
+	my $refNomCommune = shift ;
+	my @NomCommune = @{$refNomCommune} ;
+	my $refNbHabitants = shift ;
+	my @NbHabitants = @{$refNbHabitants} ;
+	my $refCodeDepartement = shift ;
+	my @CodeDepartement = @{$refCodeDepartement} ;
+	for (my $i=0 ; $i<=$#CodePostale ; $i++)
+	{
+		my $sth = $dbh ->prepare("Insert Into Adresse Values($CodePostale[$i],'$NomCommune[$i]',$NbHabitants[$i],$CodeDepartement[$i])") ;
+		my $num = $sth -> execute() ;
+		$sth->finish;
+		print "Success\n" ;
+	}
+	$dbh->disconnect();
+}
+
+
+#################### MAIN HERE ####################
 
 #Creation des listes avec un parser
 my $file = "Animaux.csv" ;
@@ -52,9 +157,30 @@ while(<SRC>)
 	push(@Sexe,$5) ;
 	push(@Sterilise,$6) ;
 	push(@AnneeNaissance,$7) ;
-	push(@Vaccin1,$8) ;
-	push(@Vaccin2,$9) ;
-	push(@Vaccin3,$10) ;
+	if ($8 eq "")
+	{
+		push(@Vaccin1, 0) ;
+	}
+	else
+	{
+		push(@Vaccin1,$8) ;
+	}
+	if ($9 eq "")
+	{
+		push(@Vaccin2, 0) ;
+	}
+	else
+	{
+		push(@Vaccin2,$9) ;
+	}
+	if ($10 eq "")
+	{
+		push(@Vaccin3, 0) ;
+	}
+	else
+	{
+		push(@Vaccin3,$10) ;
+	}
 	push(@Telephone,$11) ;
 	push(@Nom,$12) ;
 	push(@Prenom,$13) ;
@@ -66,6 +192,12 @@ while(<SRC>)
 }
 close (SRC) ;
 
+#Connection à la base de donnée
+my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
+"tfalgarone", "",{'RaiseError' =>1});
+
+
+Table_Proprietaire(\@Telephone,\@IdAnimal,\@Nom,\@Prenom) ;
 
 #Deconnection de la base de donnée
 $dbh->disconnect();
