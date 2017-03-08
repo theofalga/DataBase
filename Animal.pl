@@ -87,11 +87,11 @@ sub Table_Adresse
 	my @Telephone = @{$refTelephone};
 	my $refRue = shift ;
 	my @Rue = @{$refRue} ;
-	my $refCodePostale = shift ;
-	my @CodePostale = @{$refCodePostale} ;
+	my $refCodePostal = shift ;
+	my @CodePostal = @{$refCodePostal} ;
 	for (my $i=0 ; $i<=$#Telephone ; $i++)
 	{
-		my $sth = $dbh ->prepare("Insert Into Adresse Values($Telephone[$i],'$Rue[$i]',$CodePostale[$i])") ;
+		my $sth = $dbh ->prepare("Insert Into Adresse Values($Telephone[$i],'$Rue[$i]',$CodePostal[$i])") ;
 		my $num = $sth -> execute() ;
 		$sth->finish;
 		print "Success\n" ;
@@ -103,17 +103,17 @@ sub Table_Commune
 {
 	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
 "tfalgarone", "",{'RaiseError' =>1});
-	my $refCodePostale = shift ;
-	my @CodePostale = @{$refCodePostale};
+	my $refCodePostal = shift ;
+	my @CodePostal = @{$refCodePostal};
 	my $refNomCommune = shift ;
 	my @NomCommune = @{$refNomCommune} ;
 	my $refNbHabitants = shift ;
 	my @NbHabitants = @{$refNbHabitants} ;
 	my $refCodeDepartement = shift ;
 	my @CodeDepartement = @{$refCodeDepartement} ;
-	for (my $i=0 ; $i<=$#CodePostale ; $i++)
+	for (my $i=0 ; $i<=$#CodePostal ; $i++)
 	{
-		my $sth = $dbh ->prepare("Insert Into Adresse Values($CodePostale[$i],'$NomCommune[$i]',$NbHabitants[$i],$CodeDepartement[$i])") ;
+		my $sth = $dbh ->prepare("Insert Into Adresse Values($CodePostal[$i],'$NomCommune[$i]',$NbHabitants[$i],$CodeDepartement[$i])") ;
 		my $num = $sth -> execute() ;
 		$sth->finish;
 		print "Success\n" ;
