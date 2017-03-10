@@ -22,6 +22,7 @@ sub menu
 	print"Tapez 8 pour Afficher les proprietaires qui ont plus de trois animaux\n";
 	print"Tapez 9 pour Pour chaque commune, Afficher le nombre de proprietaires distincts\n";
 	print"Tapez 10 pour Pour chaque commune, Afficher le nombre total d'animaux\n";
+	print"Tapez 11 Pour chaque commune, Afficher le nombre total d'animaux (en perl)\n";
 	print"Tapez 0 pour quitter\n";
 }
 
@@ -318,6 +319,34 @@ sub New_Vaccin
 }
 
 
+#Afficher les animaux par nom de commune en perl
+sub nbanimal_commune
+{
+	my $refIdAnimal = shift ;
+	my @IdAnimal = @{$refIdAnimal};
+	my $refCommune = shift ;
+	my @Commune = @{$refCommune};
+	my %nbani_com ;
+	for(my $i=0 ; $i<=$#Commune ; $i++)
+	{
+		$nbani_com{$Commune[$i]}+=1 ;
+	}
+	return %nbani_com ;
+}
+
+sub affiche_nbanimal_commune
+{
+	my $refIdAnimal = shift ;
+	my $refCommune = shift ;
+	my %nbani_com = nbanimal_commune($refIdAnimal,$refCommune) ;
+	foreach my $key (keys(%nbani_com))
+	{
+		print "$key : $nbani_com{$key} animaux\n" ;
+	}
+}
+
+
+
 #################### MAIN HERE ####################
 
 
@@ -442,6 +471,14 @@ while ($answer !=0)
 	if ($answer eq 9)
 	{
 		
+	}
+	if ($answer eq 10)
+	{
+		
+	}
+	if ($answer eq 11)
+	{
+		affiche_nbanimal_commune(\@IdAnimal,\@Commune) ;
 	}
 }
 
