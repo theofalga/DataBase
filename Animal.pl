@@ -13,16 +13,18 @@ sub menu
 	print"		Que voulez vous faire ?\n";
 	print"\n";
 	print"Tapez 1 pour Ajouter un nouvel animal\n";
-	print"Tapez 2 pour Modifier l'adresse d'un proprietaire\n";
-	print"Tapez 3 pour Enregistrer un nouveau vaccin\n";
-	print"Tapez 4 pour Afficher tous les chats\n";
-	print"Tapez 5 pour Afficher les animaux de type X ayant moins de Y annees\n";
-	print"Tapez 6 pour Afficher le nombre moyen d'animaux par proprietaire\n";
-	print"Tapez 7 pour Afficher les proprietaires qui ont plus de trois animaux\n";
-	print"Tapez 8 pour Pour chaque commune, Afficher le nombre de proprietaires distincts\n";
-	print"Tapez 9 pour Pour chaque commune, Afficher le nombre total d'animaux\n";
+	print"Tapez 2 pour Supprimer un nouvel animal\n";
+	print"Tapez 3 pour Modifier l'adresse d'un proprietaire\n";
+	print"Tapez 4 pour Enregistrer un nouveau vaccin\n";
+	print"Tapez 5 pour Afficher tous les chats\n";
+	print"Tapez 6 pour Afficher les animaux de type X ayant moins de Y annees\n";
+	print"Tapez 7 pour Afficher le nombre moyen d'animaux par proprietaire\n";
+	print"Tapez 8 pour Afficher les proprietaires qui ont plus de trois animaux\n";
+	print"Tapez 9 pour Pour chaque commune, Afficher le nombre de proprietaires distincts\n";
+	print"Tapez 10 pour Pour chaque commune, Afficher le nombre total d'animaux\n";
 	print"Tapez 0 pour quitter\n";
 }
+
 
 #Ajout element table Animal
 sub Table_Animal
@@ -127,6 +129,7 @@ sub Table_Commune
 	}
 	$dbh->disconnect();
 }
+
 
 #Ajout d'un nouvel animal
 sub Ajout_Animal
@@ -233,6 +236,18 @@ sub New_Commune()
 }
 
 
+#Supprimer un animal
+sub Supprimer_Animal
+{
+	my $dbh = DBI->connect("DBI:Pg:dbname=tfalgarone;host=dbserver",
+"tfalgarone", "",{'PrintError' =>0});
+	print "Donnez l'ID de l'animal a supprimer\n" ;
+	my $ID = <STDIN> ;
+	$dbh ->do("Delete From Animal Where IDAnimal = $ID") or warn $DBI::errstr ;
+	$dbh->disconnect() ;
+}
+
+
 #Modifier l'adresse d'un proprietaire
 sub Update_Adresse
 {
@@ -304,6 +319,7 @@ sub New_Vaccin
 
 
 #################### MAIN HERE ####################
+
 
 #Creation des listes avec un parser
 my $file = "Animaux.csv" ;
@@ -397,15 +413,15 @@ while ($answer !=0)
 	}
 	if ($answer eq 2)
 	{
-		Update_Adresse() ;
+		Supprimer_Animal() ;
 	}
 	if ($answer eq 3)
 	{
-		New_Vaccin() ;
+		Update_Adresse() ;
 	}
 	if ($answer eq 4)
 	{
-		
+		New_Vaccin() ;
 	}
 	if ($answer eq 5)
 	{
