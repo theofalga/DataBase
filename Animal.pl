@@ -201,14 +201,19 @@ sub New_Proprietaire
 "tmaunier", "",{'PrintError' =>0});
 	print "Donnez le nom du proprietaire\n" ;
 	my $nom = <STDIN> ;
+	chomp $nom;
 	print "Donnez le prenom du proprietaire\n" ;
 	my $prenom = <STDIN> ;
+	chomp $prenom;
 	print "Donnez le numero de telephone du proprietaire\n" ;
 	my $tel = <STDIN> ;
+	chomp $tel;
 	print "Donnez le code postal du proprietaire\n" ;
 	my $codepostal = <STDIN> ;
+	chomp $codepostal;
 	print "Donnez le nom de la rue du proprietaire\n" ;
 	my $rue = <STDIN> ;
+	chomp $rue;
 	$dbh ->do("Insert Into Proprietaire Values($tel,'$nom','$prenom')") or warn $DBI::errstr ;
 	$dbh ->do("Insert Into Adresse Values($tel,'$rue',$codepostal)") or warn $DBI::errstr ;
 	$dbh->disconnect() ;
@@ -220,12 +225,16 @@ sub New_Commune()
 "tmaunier", "",{'PrintError' =>0});
 	print "Donnez le code postal de la commune\n" ;
 	my $codepostal = <STDIN> ;
+	chomp $codepostal;
 	print "Donnez le nom de la commune\n" ;
 	my $nom = <STDIN> ;
+	chomp $nom;
 	print "Donnez le nombre d'habitants\n" ;
 	my $nb = <STDIN> ;
+	chomp $nb;
 	print "Donnez le code departement\n" ;
 	my $codedepartement = <STDIN> ;
+	chomp $codedepartement;
 	$dbh ->do("Insert Into Commune Values($codepostal,'$nom',$nb,$codedepartement)") or warn $DBI::errstr ;
 	$dbh->disconnect() ;
 }
@@ -762,3 +771,4 @@ while ($answer !=0)
 }
 
 $dbh->disconnect();
+
