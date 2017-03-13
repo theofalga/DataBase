@@ -1,0 +1,56 @@
+body
+{
+    background-color: black;
+	background-image: url("blue.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color:white;
+    font-family:Comic Sans MS;
+    background-size: cover;
+}
+h1{
+	color: LightSkyblue ;
+}
+h2{
+font-size: 14px;
+}
+
+h3{
+	margin: 30px;
+}
+h4{
+color: LightSkyblue ;
+text-decoration: underline;
+text-align: left;
+font-size: 14px;
+margin-left: 26%;
+
+}
+p {
+text-align: left;
+font-size: 14px;
+margin-left: 26%;
+}
+
+table {
+border: 2px solid white;
+border-collapse: separate;
+width: 50%;
+margin : 30px;
+}
+th {
+font-family: bold;
+border: thin solid white;
+padding: 8px;
+}
+td {
+font-family: sans-serif;
+border: thin solid white;
+padding: 5px;
+text-align: center;
+}
+caption {
+font-family: sans-serif;
+font-weight: bold;
+margin: 8px;
+}

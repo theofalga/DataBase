@@ -1,0 +1,12 @@
+IdAnimal, NomAnimal,TypeAnimal,Couleur,Sexe,Sterilise,AnneeNaissance,Vaccin1,Vaccin2,Vaccin3,Telephone,Nom,Prenom,Rue,CodePostal,Commune,NbHabitantsCommune,CodeDepartement
+123,Pluto,Chien,Noir,M,Oui,2013,2013,2014,,66769,Dupont,Marie,Neuve,33400,Talence,41000,33
+124,Felix,Chat,Blanc,M,Oui,2011,,,,67891,Martin,Hugo,Neuve,33400,Talence,41000,33
+125,Fifi,Chat,Gris,F,Non,2016,2016,,,66769,Dupont,Marie,Neuve,33400,Talence,41000,33
+126,Pluto,Chien,Noir,M,Oui,2012,2013,2014,2016,67881,Lenoir,Marie,Vieille,33600,Pessac,56000,33
+127,Riri,Chat,Gris,F,Oui,2012,2013,2014,2016,67881,Lenoir,Marie,Vieille,33600,Pessac,56000,33
+128,Coco,Canarie,Jaune,F,Oui,2012,2013,2014,2016,67881,Lenoir,Marie,Vieille,33600,Pessac,56000,33
+129,Kiki,Canarie,Jaune,M,Oui,2012,2013,2014,2016,67881,Lenoir,Marie,Vieille,33600,Pessac,56000,33
+130,Titi,Chien,Marron,M,Non,2017,,,,68231,Carlos,Pierre,Grande,33400,Talence,41000,33
+131,Loulou,Chien,Marron,M,Non,2017,,,,68777,Carlos,Pierre,Grande,33400,Talence,41000,33
+132,Pulpo,Hamster,Gris,M,Non,2012,2012,2014,2016,67432,Bertrand,Pierre,Courte,33000,Bordeaux,240000,33
+133,Mimi,Chat,Beige,F,Non,2016,,,,65432,Carlos,Marie,Grande,33000,Bordeaux,240000,33
